@@ -3,6 +3,7 @@ import requests
 import datetime
 import random
 from flask_bootstrap import Bootstrap
+from pyngrok import ngrok
 
 app = Flask(__name__)
 app.secret_key = "fresh_cut_fries"
@@ -102,6 +103,10 @@ def process_order():
         goods_name = order_items[0]['name']
     else:
         goods_name = f"{order_items[0]['name']} 외 {len(order_items)-1}개"
+
+    # ngrok public URL 가져오기
+    public_url = app.config.get('PUBLIC_URL', '')
+    return_url = f"{public_url}/order_result" if public_url else "http://192.168.15.89:5000/order_result"
     
     # 이지페이 결제 요청
     data = {
@@ -110,7 +115,7 @@ def process_order():
         "currency": "00",
         "amount": total_amount,
         "clientTypeCode": "00",
-        "returnUrl": "http://192.168.15.89:8070/order_result",
+        "returnUrl": return_url,
         "deviceTypeCode": "pc",
         "shopOrderNo": generate_shop_transaction_id(),
         "orderInfo": {"goodsName": goods_name}
@@ -192,4 +197,9 @@ def order_response():
         return jsonify({"error": "승인 요청에 실패했습니다", "details": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=8070)
+    port = 5000
+    #public_url = ngrok.connect(port)
+    #print("Public URL:", public_url)
+    #app.config['PUBLIC_URL'] = public_url
+
+    app.run(host='0.0.0.0', port=port)
