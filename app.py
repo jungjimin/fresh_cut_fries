@@ -199,8 +199,8 @@ def order_response():
 
 if __name__ == '__main__':
     port = 5000
-    public_url = ngrok.connect(port)
+    tunnel = ngrok.connect(port)
+    public_url = tunnel.public_url  # 진짜 URL 문자열 (예: "https://abc123.ngrok.io")
     print("Public URL:", public_url)
     app.config['PUBLIC_URL'] = public_url
-
     app.run(host='0.0.0.0', port=port)
