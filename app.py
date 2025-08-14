@@ -106,9 +106,9 @@ def process_order():
 
     # ngrok public URL 가져오기
     public_url = app.config.get('PUBLIC_URL', '')
-    print(public_url)
     return_url = f"{public_url}/order_result" if public_url else "http://192.168.15.89:5000/order_result"
-    
+    print("return_url:", return_url)
+
     # 이지페이 결제 요청
     data = {
         "mallId": "T0001997",
