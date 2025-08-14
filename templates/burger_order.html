@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍔 Tasty Burger - 맛있는 햄버거 주문</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #f7931e;
+            --success-color: #28a745;
+            --dark-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-category {
+            margin-bottom: 3rem;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .category-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            margin: 0.5rem auto;
+            border-radius: 2px;
+        }
+
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .item-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .item-description {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .item-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .quantity-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .quantity-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .cart-toggle {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px 0 0 50px;
+            padding: 15px 20px;
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .cart-toggle:hover {
+            background: var(--secondary-color);
+        }
+
+        .cart-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            background: #f8f9fa;
+            padding: 1rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .checkout-section {
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            text-align: center;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .menu-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <h1><i class="fas fa-hamburger"></i> Tasty Burger</h1>
+            <p class="lead">신선하고 맛있는 햄버거를 지금 주문하세요!</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Burgers -->
+        <div class="menu-container">
+            <div class="menu-category">
+                <h2 class="category-title"><i class="fas fa-hamburger"></i> 햄버거</h2>
+                <div class="row">
+                    {% for item in menu_data.burgers %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-item">
+                            <div class="text-center">
+                                <div class="item-emoji">{{ item.image }}</div>
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-description">{{ item.description }}</div>
+                                <div class="item-price">{{ "{:,}".format(item.price) }}원</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn"
+                                        onclick="changeQuantity('{{ item.id }}', -1)">-</button>
+                                    <span class="quantity-display" id="qty-{{ item.id }}">0</span>
+                                    <button class="quantity-btn" onclick="changeQuantity('{{ item.id }}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sides -->
+        <div class="menu-container">
+            <div class="menu-category">
+                <h2 class="category-title"><i class="fas fa-utensils"></i> 사이드 메뉴</h2>
+                <div class="row">
+                    {% for item in menu_data.sides %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-item">
+                            <div class="text-center">
+                                <div class="item-emoji">{{ item.image }}</div>
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-description">{{ item.description }}</div>
+                                <div class="item-price">{{ "{:,}".format(item.price) }}원</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn"
+                                        onclick="changeQuantity('{{ item.id }}', -1)">-</button>
+                                    <span class="quantity-display" id="qty-{{ item.id }}">0</span>
+                                    <button class="quantity-btn" onclick="changeQuantity('{{ item.id }}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Drinks -->
+        <div class="menu-container">
+            <div class="menu-category">
+                <h2 class="category-title"><i class="fas fa-glass-cheers"></i> 음료</h2>
+                <div class="row">
+                    {% for item in menu_data.drinks %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-item">
+                            <div class="text-center">
+                                <div class="item-emoji">{{ item.image }}</div>
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-description">{{ item.description }}</div>
+                                <div class="item-price">{{ "{:,}".format(item.price) }}원</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn"
+                                        onclick="changeQuantity('{{ item.id }}', -1)">-</button>
+                                    <span class="quantity-display" id="qty-{{ item.id }}">0</span>
+                                    <button class="quantity-btn" onclick="changeQuantity('{{ item.id }}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Desserts -->
+        <div class="menu-container">
+            <div class="menu-category">
+                <h2 class="category-title"><i class="fas fa-cookie-bite"></i> 디저트</h2>
+                <div class="row">
+                    {% for item in menu_data.desserts %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-item">
+                            <div class="text-center">
+                                <div class="item-emoji">{{ item.image }}</div>
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-description">{{ item.description }}</div>
+                                <div class="item-price">{{ "{:,}".format(item.price) }}원</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn"
+                                        onclick="changeQuantity('{{ item.id }}', -1)">-</button>
+                                    <span class="quantity-display" id="qty-{{ item.id }}">0</span>
+                                    <button class="quantity-btn" onclick="changeQuantity('{{ item.id }}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Toggle Button -->
+    <button class="cart-toggle" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-count">0</span>
+    </button>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> 장바구니</h3>
+            <button style="background:none; border:none; color:white; float:right; font-size:1.5rem;"
+                onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div id="cart-items">
+            <div class="text-center p-4 text-muted">
+                장바구니가 비어있습니다
+            </div>
+        </div>
+
+        <div class="cart-total" id="cart-total" style="display: none;">
+            총 금액: <span id="total-amount">0</span>원
+        </div>
+
+        <div class="checkout-section" id="checkout-section" style="display: none;">
+            <h5 class="mb-3">결제 수단 선택</h5>
+            <div class="payment-methods">
+                <div class="payment-option selected" data-method="11">
+                    <i class="fas fa-credit-card"></i>
+                    <div>신용카드</div>
+                </div>
+                <div class="payment-option" data-method="21">
+                    <i class="fas fa-university"></i>
+                    <div>계좌이체</div>
+                </div>
+                <div class="payment-option" data-method="22">
+                    <i class="fas fa-money-check"></i>
+                    <div>가상계좌</div>
+                </div>
+                <div class="payment-option" data-method="31">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div>휴대폰</div>
+                </div>
+            </div>
+
+            <button class="order-btn" onclick="processOrder()">
+                <span class="normal-text">주문하기</span>
+                <span class="loading"><i class="fas fa-spinner fa-spin"></i> 처리중...</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const menuData = {{ menu_data | tojson }};
+        let cart = {};
+        let selectedPaymentMethod = '11';
+
+        function changeQuantity(itemId, change) {
+            const currentQty = cart[itemId] || 0;
+            const newQty = Math.max(0, currentQty + change);
+
+            if (newQty === 0) {
+                delete cart[itemId];
+            } else {
+                cart[itemId] = newQty;
+            }
+
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            // Update quantity displays
+            Object.keys(cart).forEach(itemId => {
+                document.getElementById(`qty-${itemId}`).textContent = cart[itemId];
+            });
+
+            // Update items not in cart to show 0
+            const allItems = [...menuData.burgers, ...menuData.sides, ...menuData.drinks, ...menuData.desserts];
+            allItems.forEach(item => {
+                if (!cart[item.id]) {
+                    document.getElementById(`qty-${item.id}`).textContent = '0';
+                }
+            });
+
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const checkoutSection = document.getElementById('checkout-section');
+            const cartCount = document.getElementById('cart-count');
+
+            const cartItems = Object.keys(cart);
+            let totalAmount = 0;
+            let totalItems = 0;
+
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<div class="text-center p-4 text-muted">장바구니가 비어있습니다</div>';
+                cartTotal.style.display = 'none';
+                checkoutSection.style.display = 'none';
+                cartCount.textContent = '0';
+                return;
+            }
+
+            let cartHTML = '';
+            const allItems = [...menuData.burgers, ...menuData.sides, ...menuData.drinks, ...menuData.desserts];
+
+            cartItems.forEach(itemId => {
+                const item = allItems.find(i => i.id === itemId);
+                const quantity = cart[itemId];
+                const itemTotal = item.price * quantity;
+                totalAmount += itemTotal;
+                totalItems += quantity;
+
+                cartHTML += `
+                    <div class="cart-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">${item.name}</div>
+                                <div class="text-muted">${item.price.toLocaleString()}원 × ${quantity}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold text-primary">${itemTotal.toLocaleString()}원</div>
+                                <div class="d-flex align-items-center gap-2 mt-1">
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity('${itemId}', -1)">-</button>
+                                    <span>${quantity}</span>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity('${itemId}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartItemsContainer.innerHTML = cartHTML;
+            document.getElementById('total-amount').textContent = totalAmount.toLocaleString();
+            cartTotal.style.display = 'block';
+            checkoutSection.style.display = 'block';
+            cartCount.textContent = totalItems;
+        }
+
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            cartSidebar.classList.toggle('open');
+        }
+
+        function processOrder() {
+            if (Object.keys(cart).length === 0) {
+                alert('장바구니에 상품을 추가해주세요!');
+                return;
+            }
+
+            const orderButton = document.querySelector('.order-btn');
+            const normalText = orderButton.querySelector('.normal-text');
+            const loadingText = orderButton.querySelector('.loading');
+
+            // 로딩 상태로 변경
+            orderButton.disabled = true;
+            normalText.style.display = 'none';
+            loadingText.classList.add('show');
+
+            const orderData = {
+                items: Object.keys(cart).map(itemId => ({
+                    id: itemId,
+                    quantity: cart[itemId]
+                })),
+                paymentMethod: selectedPaymentMethod
+            };
+
+            fetch('/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.authPageUrl) {
+                        // 결제 페이지로 리다이렉트
+                        window.location.href = data.authPageUrl;
+                    } else {
+                        throw new Error(data.error || '주문 처리 중 오류가 발생했습니다');
+                    }
+                })
+                .catch(error => {
+                    alert('주문 처리 중 오류가 발생했습니다: ' + error.message);
+
+                    // 로딩 상태 해제
+                    orderButton.disabled = false;
+                    normalText.style.display = 'inline';
+                    loadingText.classList.remove('show');
+                });
+        }
+
+        // 결제 수단 선택
+        document.addEventListener('DOMContentLoaded', function () {
+            const paymentOptions = document.querySelectorAll('.payment-option');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedPaymentMethod = this.dataset.method;
+                });
+            });
+        });
+
+        // 외부 클릭 시 장바구니 닫기
+        document.addEventListener('click', function (event) {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            const cartToggle = document.querySelector('.cart-toggle');
+
+            if (!cartSidebar.contains(event.target) && !cartToggle.contains(event.target)) {
+                cartSidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+
+</html>

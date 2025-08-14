@@ -1,0 +1,80 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}주문 페이지{% endblock %}
+
+{% block content %}
+<!-- 전체 페이지 컨테이너 -->
+<div class="container mt-5">
+    <!-- 제목 부분 -->
+    <div class="text-center mb-4">
+        <h2 class="display-4 text-primary">맛있는 주문을 시작해요!</h2>
+        <p class="lead text-secondary">최고의 감자튀김을 지금 바로 주문해보세요! <span class="emoji">🍟</span></p>
+    </div>
+
+    <!-- 주문 폼 -->
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form method="post">
+                <!-- Mall ID 입력 -->
+                <div class="mb-4">
+                    <label class="form-label">Mall ID</label>
+                    <input type="text" name="mallId" class="form-control" value="T0001997" required>
+                </div>
+            
+                <!-- 결제 금액 입력 -->
+                <div class="mb-4">
+                    <label class="form-label">결제 금액</label>
+                    <input type="number" name="amount" class="form-control" value="7900" required>
+                </div>
+            
+                <!-- 상품명 입력 -->
+                <div class="mb-4">
+                    <label class="form-label">상품명</label>
+                    <select name="goodsName" class="form-control" required>
+                        <option value="생감자튀김">생감자튀김</option>
+                        <option value="직접 만든 수제햄버거">직접 만든 수제햄버거</option>
+                    </select>                    
+                </div>
+            
+                <!-- 결제 수단 입력 (셀렉트 박스) -->
+                <div class="mb-4">
+                    <label class="form-label">결제 수단</label>
+                    <select name="payMethodTypeCode" class="form-control" required>
+                        <option value="11">신용카드</option>
+                        <option value="21">계좌이체</option>
+                        <option value="22">가상계좌</option>
+                        <option value="31">휴대폰</option>
+                        <option value="50">선불결제</option>
+                        <option value="60">간편결제</option>
+                        <option value="81">빌키인증</option>
+                    </select>
+                </div>
+            
+                <!-- 주문 버튼 -->
+                <div class="d-flex justify-content-center mb-4"></div>
+                    <button type="submit" class="btn btn-warning btn-lg">주문하기</button>
+                </div>
+            </form>        
+        </div>
+    </div>
+</div>
+
+<!-- 애니메이션을 통한 효과 (스크롤에 따른 변화) -->
+<script>
+    document.addEventListener("scroll", function() {
+        let scrollPos = window.scrollY;
+        let header = document.querySelector('h2');
+        header.style.transform = 'translateY(' + scrollPos * 0.1 + 'px)';
+        header.style.opacity = 1 - scrollPos / 300;
+    });
+
+    // 부드러운 배경 색 변환 효과
+    window.addEventListener('scroll', () => {
+        let scrollPos = window.scrollY;
+        let formContainer = document.querySelector('.container');
+        let opacity = 1 - (scrollPos / 500);
+        formContainer.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
+    });
+</script>
+
+{% endblock %}

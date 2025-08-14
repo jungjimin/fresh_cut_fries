@@ -1,0 +1,48 @@
+{% extends "bootstrap/base.html" %}
+
+<head>
+    <!-- meta charset="UTF-8"-->
+    <title>{% block title %}승인 응답{% endblock %}</title>
+    <!-- 다른 링크나 스타일시트 포함 -->
+</head>
+
+{% block content %}
+<!-- 전체 페이지 컨테이너 -->
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="display-4 text-success">승인 요청 결과</h2>
+        <p class="lead text-muted">결제 승인 요청의 결과를 확인하세요!</p>
+    </div>
+
+    <!-- 승인 응답 표시 -->
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-info text-white">
+            <h4>승인 요청 결과</h4>
+        </div>
+        <div class="card-body">
+            <!-- resCd가 0000이면 성공, 그렇지 않으면 실패 -->
+            {% if approval_response.resCd == "0000" %}
+                <div class="alert alert-success" role="alert">
+                    <h5 class="alert-heading">승인 요청 성공!</h5>
+                    <p>승인 요청이 성공적으로 처리되었습니다. 🎉</p>
+                </div>
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">승인 요청 실패</h5>
+                    <p>승인 요청에 문제가 발생했습니다. 나중에 다시 시도해주세요.</p>
+                </div>
+            {% endif %}
+
+            <!-- 응답 데이터 표시 -->
+            <h5>응답 데이터:</h5>
+            <pre>{{ approval_response | tojson(indent=2) }}</pre>
+        </div>
+    </div>
+
+    <!-- 이전 페이지로 돌아가는 버튼 -->
+    <div class="text-center">
+        <a href="/" class="btn btn-primary btn-lg">홈으로 돌아가기</a>
+    </div>
+</div>
+
+{% endblock %}
